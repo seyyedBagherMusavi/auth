@@ -1,0 +1,59 @@
+{
+  "info": {
+    "name": "Bontech Auth Server APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Collection for all current APIs in auth server"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "tenantId", "value": "1" },
+    { "key": "userId", "value": "1" },
+    { "key": "groupId", "value": "1" },
+    { "key": "permissionId", "value": "1" },
+    { "key": "roleId", "value": "1" }
+  ],
+  "item": [
+    {"name":"Auth Register","request":{"method":"POST","header":[],"url":"{{baseUrl}}/api/auth/register","body":{"mode":"raw","raw":"{\n  \"tenantCode\": \"t1\",\n  \"tenantName\": \"Tenant 1\",\n  \"tenantBaseUrl\": \"https://t1.example.com\",\n  \"username\": \"u1\",\n  \"password\": \"Password123\",\n  \"systemUser\": false,\n  \"phones\": [{\"phoneNumber\": \"09120000000\", \"preferred\": true}],\n  \"roleCodes\": [\"ADMIN\"]\n}"}}},
+    {"name":"Auth Login Phone","request":{"method":"POST","url":"{{baseUrl}}/api/auth/login/phone","body":{"mode":"raw","raw":"{\"phoneNumber\":\"09120000000\",\"captchaToken\":\"ok\"}"}}},
+    {"name":"Auth Verify 2FA","request":{"method":"POST","url":"{{baseUrl}}/api/auth/verify-2fa","body":{"mode":"raw","raw":"{\"phoneNumber\":\"09120000000\",\"code\":\"123456\"}"}}},
+    {"name":"Auth Change Expired Password","request":{"method":"POST","url":"{{baseUrl}}/api/auth/password/change-expired","body":{"mode":"raw","raw":"{\"phoneNumber\":\"09120000000\",\"currentPassword\":\"Password123\",\"newPassword\":\"Password456\"}"}}},
+    {"name":"Auth Impersonate","request":{"method":"POST","url":"{{baseUrl}}/api/auth/impersonate","body":{"mode":"raw","raw":"{\"actorUsername\":\"admin\",\"targetUsername\":\"user\"}"}}},
+
+    {"name":"User Authorization","request":{"method":"GET","url":"{{baseUrl}}/api/users/u1/authorization"}},
+    {"name":"Users by Role","request":{"method":"GET","url":"{{baseUrl}}/api/users/by-role/ADMIN"}},
+    {"name":"Users by Permission","request":{"method":"GET","url":"{{baseUrl}}/api/users/by-permission/USER_READ"}},
+
+    {"name":"Sessions Active","request":{"method":"GET","url":"{{baseUrl}}/api/sessions/u1"}},
+    {"name":"Sessions Signout Others","request":{"method":"POST","url":"{{baseUrl}}/api/sessions/sign-out-others","body":{"mode":"raw","raw":"{\"username\":\"u1\",\"currentSessionId\":\"sid\"}"}}},
+
+    {"name":"Report Logs","request":{"method":"GET","url":"{{baseUrl}}/api/reports/users/u1/logs"}},
+    {"name":"Report Activity","request":{"method":"GET","url":"{{baseUrl}}/api/reports/users/u1/activity"}},
+
+    {"name":"Admin Tenant Create (SUPER_ADMIN)","request":{"method":"POST","header":[{"key":"X-Actor-Role","value":"SUPER_ADMIN"}],"url":"{{baseUrl}}/api/admin/tenants","body":{"mode":"raw","raw":"{\"code\":\"t2\",\"name\":\"Tenant 2\",\"baseUrl\":\"https://t2.example.com\"}"}}},
+    {"name":"Admin Tenant List (SUPER_ADMIN)","request":{"method":"GET","header":[{"key":"X-Actor-Role","value":"SUPER_ADMIN"}],"url":"{{baseUrl}}/api/admin/tenants"}},
+    {"name":"Admin Tenant Update (SUPER_ADMIN)","request":{"method":"PUT","header":[{"key":"X-Actor-Role","value":"SUPER_ADMIN"}],"url":"{{baseUrl}}/api/admin/tenants/{{tenantId}}","body":{"mode":"raw","raw":"{\"code\":\"t2\",\"name\":\"Tenant 2 Updated\",\"baseUrl\":\"https://t2-updated.example.com\"}"}}},
+    {"name":"Admin Tenant Delete (SUPER_ADMIN)","request":{"method":"DELETE","header":[{"key":"X-Actor-Role","value":"SUPER_ADMIN"}],"url":"{{baseUrl}}/api/admin/tenants/{{tenantId}}"}},
+
+    {"name":"Admin Permission Create","request":{"method":"POST","url":"{{baseUrl}}/api/admin/permissions","body":{"mode":"raw","raw":"{\"code\":\"GROUP_ASSIGN\",\"description\":\"Assign to group\"}"}}},
+    {"name":"Admin Permission List","request":{"method":"GET","url":"{{baseUrl}}/api/admin/permissions"}},
+    {"name":"Admin Permission Get","request":{"method":"GET","url":"{{baseUrl}}/api/admin/permissions/{{permissionId}}"}},
+    {"name":"Admin Permission Update","request":{"method":"PUT","url":"{{baseUrl}}/api/admin/permissions/{{permissionId}}","body":{"mode":"raw","raw":"{\"code\":\"GROUP_ASSIGN\",\"description\":\"Assign permission to group\"}"}}},
+    {"name":"Admin Permission Delete","request":{"method":"DELETE","url":"{{baseUrl}}/api/admin/permissions/{{permissionId}}"}},
+
+    {"name":"Admin Role Create","request":{"method":"POST","url":"{{baseUrl}}/api/admin/roles","body":{"mode":"raw","raw":"{\"code\":\"TENANT_ADMIN\",\"tenantId\":{{tenantId}},\"permissionIds\":[{{permissionId}}]}"}}},
+    {"name":"Admin Role List","request":{"method":"GET","url":"{{baseUrl}}/api/admin/roles"}},
+    {"name":"Admin Role Get","request":{"method":"GET","url":"{{baseUrl}}/api/admin/roles/{{roleId}}"}},
+    {"name":"Admin Role Update","request":{"method":"PUT","url":"{{baseUrl}}/api/admin/roles/{{roleId}}","body":{"mode":"raw","raw":"{\"code\":\"TENANT_ADMIN\",\"tenantId\":{{tenantId}},\"permissionIds\":[{{permissionId}}]}"}}},
+    {"name":"Admin Role Delete","request":{"method":"DELETE","url":"{{baseUrl}}/api/admin/roles/{{roleId}}"}},
+
+    {"name":"Tenant Admin User Create","request":{"method":"POST","header":[{"key":"X-Actor-Role","value":"TENANT_ADMIN"},{"key":"X-Actor-Tenant-Id","value":"{{tenantId}}"}],"url":"{{baseUrl}}/api/tenant-admin/users","body":{"mode":"raw","raw":"{\"username\":\"tenant-user\",\"password\":\"Password123\",\"systemUser\":false,\"tenantId\":{{tenantId}},\"roleIds\":[{{roleId}}]}"}}},
+    {"name":"Tenant Admin User List","request":{"method":"GET","header":[{"key":"X-Actor-Role","value":"TENANT_ADMIN"},{"key":"X-Actor-Tenant-Id","value":"{{tenantId}}"}],"url":"{{baseUrl}}/api/tenant-admin/users"}},
+    {"name":"Tenant Admin User Get","request":{"method":"GET","header":[{"key":"X-Actor-Role","value":"TENANT_ADMIN"},{"key":"X-Actor-Tenant-Id","value":"{{tenantId}}"}],"url":"{{baseUrl}}/api/tenant-admin/users/{{userId}}"}},
+    {"name":"Tenant Admin User Update","request":{"method":"PUT","header":[{"key":"X-Actor-Role","value":"TENANT_ADMIN"},{"key":"X-Actor-Tenant-Id","value":"{{tenantId}}"}],"url":"{{baseUrl}}/api/tenant-admin/users/{{userId}}","body":{"mode":"raw","raw":"{\"username\":\"tenant-user-updated\",\"systemUser\":false,\"roleIds\":[{{roleId}}]}"}}},
+    {"name":"Tenant Admin User Delete","request":{"method":"DELETE","header":[{"key":"X-Actor-Role","value":"TENANT_ADMIN"},{"key":"X-Actor-Tenant-Id","value":"{{tenantId}}"}],"url":"{{baseUrl}}/api/tenant-admin/users/{{userId}}"}},
+
+    {"name":"Group Create","request":{"method":"POST","url":"{{baseUrl}}/api/groups","body":{"mode":"raw","raw":"{\"name\":\"Team A\",\"tenantId\":{{tenantId}},\"fatherUserId\":{{userId}}}"}}},
+    {"name":"Group Get","request":{"method":"GET","url":"{{baseUrl}}/api/groups/{{groupId}}"}},
+    {"name":"Group Assign Permission By Father","request":{"method":"POST","url":"{{baseUrl}}/api/groups/{{groupId}}/permissions","body":{"mode":"raw","raw":"{\"actorUserId\":{{userId}},\"permissionId\":{{permissionId}}}"}}}
+  ]
+}
