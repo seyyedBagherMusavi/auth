@@ -1,6 +1,6 @@
 # Spring Boot Multi-tenant AuthZ/AuthN Server
 
-Implements an OAuth2 authentication/authorization server using Spring Authorization Server and Spring Security OAuth2 with:
+Implements an OAuth2 authentication/authorization server using Spring Boot 4, Spring Authorization Server and Spring Security OAuth2 with:
 
 - Multi-tenancy (`Tenant` linked by foreign keys), and each tenant has its own `baseUrl` (Dual Mapping: FK field + read-only association).
 - Registration service.
@@ -82,3 +82,10 @@ mvn spring-boot:run
 ## Postman
 
 - Collection file: `postman/Auth-Server.postman_collection.json`
+
+
+## Database migrations
+
+- Liquibase is enabled and manages schema creation and default seed data.
+- Changelogs: `src/main/resources/db/changelog`
+- Default CSV seed files: `src/main/resources/db/data`
