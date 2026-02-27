@@ -46,12 +46,13 @@ public class RegistrationService {
         user.setPasswordExpiresAt(Instant.now().plus(90, ChronoUnit.DAYS));
         user.setPasswordChangeRequired(false);
         Optional.ofNullable(request.roleCodes()).orElseGet(java.util.List::of)
-                .forEach(code -> roleRepository.findByCode(code).ifPresent(user.getRoles()::add));
+                .forEach(code -> roleRepository.findByCodeAndTenantId(code, tenant.getId()).ifPresent(user.getRoles()::add));
         UserAccount savedUser = userRepository.save(user);
 
         PasswordHistory history = new PasswordHistory();
         history.setUserId(savedUser.getId());
         history.setPasswordHash(savedUser.getPasswordHash());
+        history.setTenantId(tenant.getId());
         passwordHistoryRepository.save(history);
 
         for (AuthDto.PhoneInput phone : request.phones()) {
@@ -60,6 +61,7 @@ public class RegistrationService {
             p.setPhoneNumber(phone.phoneNumber());
             p.setNationalCode(phone.nationalCode());
             p.setPreferredNumber(phone.preferred());
+            p.setTenantId(tenant.getId());
             phoneRepository.save(p);
         }
         return savedUser;

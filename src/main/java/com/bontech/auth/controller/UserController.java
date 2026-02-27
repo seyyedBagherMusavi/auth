@@ -13,17 +13,20 @@ public class UserController {
 
 
     @GetMapping("/{username}/authorization")
-    public UserDto.UserAuthzResponse userAuthz(@PathVariable String username) {
-        return service.getAuthz(username);
+    public UserDto.UserAuthzResponse userAuthz(@RequestHeader("X-Actor-Tenant-Id") Long actorTenantId,
+                                               @PathVariable String username) {
+        return service.getAuthz(username, actorTenantId);
     }
 
     @GetMapping("/by-role/{roleCode}")
-    public UserDto.RoleUsersResponse usersByRole(@PathVariable String roleCode) {
-        return service.usersByRole(roleCode);
+    public UserDto.RoleUsersResponse usersByRole(@RequestHeader("X-Actor-Tenant-Id") Long actorTenantId,
+                                                 @PathVariable String roleCode) {
+        return service.usersByRole(roleCode, actorTenantId);
     }
 
     @GetMapping("/by-permission/{permissionCode}")
-    public UserDto.PermissionUsersResponse usersByPermission(@PathVariable String permissionCode) {
-        return service.usersByPermission(permissionCode);
+    public UserDto.PermissionUsersResponse usersByPermission(@RequestHeader("X-Actor-Tenant-Id") Long actorTenantId,
+                                                             @PathVariable String permissionCode) {
+        return service.usersByPermission(permissionCode, actorTenantId);
     }
 }

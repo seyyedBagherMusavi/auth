@@ -49,8 +49,18 @@ public class GroupController {
             throw new IllegalArgumentException("Only group father can assign permissions to own group");
         }
         Permission permission = permissionRepository.findById(request.permissionId()).orElseThrow();
+        if (!group.getTenantId().equals(permission.getTenantId())) {
+            throw new IllegalArgumentException("Permission is not in group tenant");
+        }
+        if (!permission.isActive()) {
+            throw new IllegalArgumentException("Permission is inactive for tenant");
+        }
         groupPermissionRepository.findByGroupIdAndPermissionId(groupId, permission.getId())
-                .orElseGet(() -> groupPermissionRepository.save(GroupPermission.builder().groupId(groupId).permissionId(permission.getId()).build()));
+                .orElseGet(() -> groupPermissionRepository.save(GroupPermission.builder()
+                        .groupId(groupId)
+                        .permissionId(permission.getId())
+                        .tenantId(group.getTenantId())
+                        .build()));
         return get(groupId);
     }
 }

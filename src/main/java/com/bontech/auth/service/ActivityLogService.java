@@ -24,6 +24,7 @@ public class ActivityLogService {
         activity.setDetails(details);
         activity.setActionAt(Instant.now());
         activity.setTenantCode(user.getTenant().getCode());
+        activity.setTenantId(user.getTenantId());
         activity.setUsername(user.getUsername());
         repository.save(activity);
 

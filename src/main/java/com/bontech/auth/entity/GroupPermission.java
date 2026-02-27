@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Filter;
 
 @Getter
 @Setter
@@ -13,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Table(name = "group_permissions", uniqueConstraints = {
         @UniqueConstraint(name = "uk_group_permission", columnNames = {"group_id", "permission_id"})
 })

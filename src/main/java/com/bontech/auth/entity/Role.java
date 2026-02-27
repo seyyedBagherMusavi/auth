@@ -8,20 +8,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Filter;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "roles")
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
+@Table(name = "roles", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_role_code_tenant", columnNames = {"code", "tenant_id"})
+})
 public class Role extends AuditableEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String code;
-
-    @Column(name = "tenant_id", nullable = false)
-    private Long tenantId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenant_id", foreignKey = @ForeignKey(name = "fk_role_tenant"), insertable = false, updatable = false)

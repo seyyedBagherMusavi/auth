@@ -7,7 +7,7 @@
 
     <logger name="com.example.auth.service.ActivityLogService" level="INFO"/>
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>
     </root>
 </configuration>

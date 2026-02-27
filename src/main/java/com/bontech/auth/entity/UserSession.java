@@ -7,10 +7,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Filter;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
 @Entity
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Table(name = "user_sessions")
 public class UserSession extends AuditableEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)

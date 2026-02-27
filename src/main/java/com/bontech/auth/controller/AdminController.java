@@ -51,21 +51,28 @@ public class AdminController {
 
     @PostMapping("/permissions")
     public AdminDto.PermissionResponse createPermission(@Valid @RequestBody AdminDto.PermissionCreateRequest request) {
-        Permission permission = Permission.builder().code(request.code()).description(request.description()).build();
+        Permission permission = Permission.builder()
+                .code(request.code())
+                .description(request.description())
+                .tenantId(request.tenantId())
+                .active(request.active() == null || request.active())
+                .build();
         Permission saved = permissionRepository.save(permission);
-        return new AdminDto.PermissionResponse(saved.getId(), saved.getCode(), saved.getDescription());
+        return new AdminDto.PermissionResponse(saved.getId(), saved.getCode(), saved.getDescription(), saved.getTenantId(), saved.isActive());
     }
 
     @GetMapping("/permissions")
     public List<AdminDto.PermissionResponse> listPermissions() {
-        return permissionRepository.findAll().stream().map(p -> new AdminDto.PermissionResponse(p.getId(), p.getCode(), p.getDescription())).toList();
+        return permissionRepository.findAll().stream()
+                .map(p -> new AdminDto.PermissionResponse(p.getId(), p.getCode(), p.getDescription(), p.getTenantId(), p.isActive()))
+                .toList();
     }
 
 
     @GetMapping("/permissions/{id}")
     public AdminDto.PermissionResponse getPermission(@PathVariable Long id) {
         Permission p = permissionRepository.findById(id).orElseThrow();
-        return new AdminDto.PermissionResponse(p.getId(), p.getCode(), p.getDescription());
+        return new AdminDto.PermissionResponse(p.getId(), p.getCode(), p.getDescription(), p.getTenantId(), p.isActive());
     }
 
     @PutMapping("/permissions/{id}")
@@ -73,8 +80,10 @@ public class AdminController {
         Permission permission = permissionRepository.findById(id).orElseThrow();
         permission.setCode(request.code());
         permission.setDescription(request.description());
+        permission.setTenantId(request.tenantId());
+        permission.setActive(request.active() == null || request.active());
         Permission saved = permissionRepository.save(permission);
-        return new AdminDto.PermissionResponse(saved.getId(), saved.getCode(), saved.getDescription());
+        return new AdminDto.PermissionResponse(saved.getId(), saved.getCode(), saved.getDescription(), saved.getTenantId(), saved.isActive());
     }
 
     @DeleteMapping("/permissions/{id}")

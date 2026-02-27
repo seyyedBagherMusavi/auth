@@ -21,13 +21,17 @@ public final class AuthDto {
 
     public record PhoneInput(@NotBlank String phoneNumber, String nationalCode, boolean preferred) {}
 
-    public record PhoneLoginRequest(@NotBlank String phoneNumber, @NotBlank String captchaToken) {}
+    public record LoginStartRequest(@NotBlank String username, @NotBlank String password, @NotBlank String captchaToken) {}
 
-    public record TwoStepStartResponse(String message, List<MaskedPhone> candidates, boolean passwordChangeRequired) {}
+    public record LoginStartResponse(String status, String message, List<MaskedPhone> candidates, boolean passwordChangeRequired) {}
+
+    public record SelectPhoneRequest(@NotBlank String username, @NotBlank String nationalCode) {}
+
+    public record SelectPhoneResponse(String status, String message, boolean passwordChangeRequired) {}
 
     public record MaskedPhone(String phone, String nationalCode) {}
 
-    public record TwoStepVerifyRequest(@NotBlank String phoneNumber, @NotBlank String code, String nationalCode) {}
+    public record TwoStepVerifyRequest(@NotBlank String username, @NotBlank String code) {}
 
     public record TokenResponse(String accessToken, String tokenType, long expiresIn) {}
 

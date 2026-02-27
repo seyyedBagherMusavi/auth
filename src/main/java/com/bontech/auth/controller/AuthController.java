@@ -21,9 +21,14 @@ public class AuthController {
         registrationService.register(request);
     }
 
-    @PostMapping("/login/phone")
-    public AuthDto.TwoStepStartResponse loginStepOne(@Valid @RequestBody AuthDto.PhoneLoginRequest request) {
+    @PostMapping("/login")
+    public AuthDto.LoginStartResponse loginStepOne(@Valid @RequestBody AuthDto.LoginStartRequest request) {
         return authService.loginStepOne(request);
+    }
+
+    @PostMapping("/login/select-phone")
+    public AuthDto.SelectPhoneResponse selectPhone(@Valid @RequestBody AuthDto.SelectPhoneRequest request) {
+        return authService.selectPhone(request);
     }
 
     @PostMapping("/verify-2fa")

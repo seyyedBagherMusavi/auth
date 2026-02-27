@@ -9,16 +9,20 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Filter;
 
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 @SuperBuilder
 @Entity
-@Table(name = "users")
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
+@Table(name = "users", uniqueConstraints = {
+        @UniqueConstraint(name = "uk_user_username_tenant", columnNames = {"username", "tenant_id"})
+})
 public class UserAccount extends AuditableEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
@@ -32,9 +36,6 @@ public class UserAccount extends AuditableEntity {
 
     @Column(nullable = false)
     private boolean passwordChangeRequired;
-
-    @Column(name = "tenant_id", nullable = false)
-    private Long tenantId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenant_id", foreignKey = @ForeignKey(name = "fk_user_tenant"), insertable = false, updatable = false)

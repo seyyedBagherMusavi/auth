@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.Filter;
 
 @Getter
 @Setter
@@ -13,6 +14,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 @Entity
+@Filter(name = "tenantFilter", condition = "tenant_id = :tenantId")
 @Table(name = "user_groups")
 public class UserGroup extends AuditableEntity {
     @Id
@@ -21,9 +23,6 @@ public class UserGroup extends AuditableEntity {
 
     @Column(nullable = false)
     private String name;
-
-    @Column(name = "tenant_id", nullable = false)
-    private Long tenantId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenant_id", insertable = false, updatable = false)

@@ -20,8 +20,10 @@ databaseChangeLog:
             tableName: permissions
             columns:
               - column: { name: id, type: BIGINT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
-              - column: { name: code, type: VARCHAR(100), constraints: { nullable: false, unique: true } }
+              - column: { name: code, type: VARCHAR(100), constraints: { nullable: false } }
               - column: { name: description, type: VARCHAR(255), constraints: { nullable: false } }
+              - column: { name: tenant_id, type: BIGINT, constraints: { nullable: false } }
+              - column: { name: active, type: BOOLEAN, constraints: { nullable: false } }
               - column: { name: created_at, type: TIMESTAMP, constraints: { nullable: false } }
               - column: { name: updated_at, type: TIMESTAMP, constraints: { nullable: false } }
               - column: { name: created_by, type: VARCHAR(100) }
@@ -32,7 +34,7 @@ databaseChangeLog:
             tableName: roles
             columns:
               - column: { name: id, type: BIGINT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
-              - column: { name: code, type: VARCHAR(100), constraints: { nullable: false, unique: true } }
+              - column: { name: code, type: VARCHAR(100), constraints: { nullable: false } }
               - column: { name: tenant_id, type: BIGINT, constraints: { nullable: false } }
               - column: { name: created_at, type: TIMESTAMP, constraints: { nullable: false } }
               - column: { name: updated_at, type: TIMESTAMP, constraints: { nullable: false } }
@@ -44,7 +46,7 @@ databaseChangeLog:
             tableName: users
             columns:
               - column: { name: id, type: BIGINT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
-              - column: { name: username, type: VARCHAR(100), constraints: { nullable: false, unique: true } }
+              - column: { name: username, type: VARCHAR(100), constraints: { nullable: false } }
               - column: { name: password_hash, type: VARCHAR(255), constraints: { nullable: false } }
               - column: { name: system_user, type: BOOLEAN, constraints: { nullable: false } }
               - column: { name: password_expires_at, type: TIMESTAMP, constraints: { nullable: false } }
@@ -179,12 +181,34 @@ databaseChangeLog:
             columnNames: group_id, permission_id
             constraintName: uk_group_permission
 
+        - addUniqueConstraint:
+            tableName: roles
+            columnNames: code, tenant_id
+            constraintName: uk_role_code_tenant
+
+        - addUniqueConstraint:
+            tableName: users
+            columnNames: username, tenant_id
+            constraintName: uk_user_username_tenant
+
+        - addUniqueConstraint:
+            tableName: permissions
+            columnNames: code, tenant_id
+            constraintName: uk_permission_code_tenant
+
         - addForeignKeyConstraint:
             baseTableName: roles
             baseColumnNames: tenant_id
             referencedTableName: tenants
             referencedColumnNames: id
             constraintName: fk_role_tenant
+
+        - addForeignKeyConstraint:
+            baseTableName: permissions
+            baseColumnNames: tenant_id
+            referencedTableName: tenants
+            referencedColumnNames: id
+            constraintName: fk_permission_tenant
 
         - addForeignKeyConstraint:
             baseTableName: users
